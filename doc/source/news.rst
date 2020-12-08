@@ -7,6 +7,64 @@
 News
 ====
 
+.. _release-10-1-0:
+
+Release 10.1.0 - 2020-12-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Added support for removing leading full width spaces. [PGroonga#GitHub#155][Reported by Hung Nguyen V]
+
+  * Until now, leading full width spaces had also included in the target of highlight as below.
+
+    .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries body COLUMN_SCALAR ShortText
+
+      table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+      column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+      load --table Entries
+      [
+      {"body": "Groonga　高速！"}
+      ]
+
+      select Entries --output_columns \
+        --match_columns body --query '高速' \
+        --output_columns 'highlight_html(body)'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              1
+            ],
+            [
+              [
+                "highlight_html",
+                null
+              ]
+            ],
+            [
+              "Groonga<span class=\"keyword\">　高速</span>！"
+            ]
+          ]
+        ]
+      ]
+
+  * However, this is needless as the target of highlight.
+    Therefore, in this release, ``highlight_html()`` removes leading full width spaces.
+
+Fixes
+^^^^^
+
 .. _release-10-0-9:
 
 Release 10.0.9 - 2020-12-01
